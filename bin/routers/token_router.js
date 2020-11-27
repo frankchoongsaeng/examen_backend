@@ -4,7 +4,6 @@ const { verifyToken } = require("../controllers/token_controller");
 
 t_router.get("/verify", (req, res) => {
   let token = req.query.token;
-  console.table(token);
   verifyToken(token, (status, response) => {
     res.status(status);
     res.json(response);

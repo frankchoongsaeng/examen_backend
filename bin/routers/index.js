@@ -9,14 +9,19 @@ const userRouter = require("./user_router");
 const examRouter = require("./exam_router");
 const tokenRouter = require("./token_router");
 const questionRouter = require("./question_router");
+const { isValidToken } = require("../utils/is_valid_token");
 // const submissionRouter = require("./submission_router");
 
 
 // enable cross-origin-requests
 router.use(cors());
 
+// router.use("*", express.static(path.join(__dirname, "../../public/")));
+
 // parse body of request to json
 router.use(bodyParser.json());
+
+router.use(isValidToken);
 
 router.use("/api/users", userRouter);
 
@@ -26,7 +31,6 @@ router.use("/api/questions", questionRouter);
 
 router.use("/api/token", tokenRouter);
 
-router.use("*", express.static(path.join(__dirname, "../../public/")));
 
 // Router.use("/submissions", submissionRouter);
 

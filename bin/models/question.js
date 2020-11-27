@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-// const muv = require("mongoose-unique-validator");
+
 
 const schema = new mongoose.Schema({
   examId: {
@@ -10,17 +10,15 @@ const schema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    default: "Uncategorized"
+    default: "uncategorized"
   },
   questionType: {
     type: String,
     default: "subjective",
     required: true
   },
-  question: Object,
-  question_number: Number
-})
+  question: String
+});
 
-// schema.plugin(muv);
 
 module.exports = mongoose.model("Question", schema);

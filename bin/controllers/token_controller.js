@@ -7,8 +7,6 @@ function verifyToken(token, callback) {
 
   jwt.verify(token, process.env.SECRET, (err, decoded) => {
 
-    console.log("error: " + err, "decoded: " + decoded);
-
     if (decoded) {
 
       data.userId = decoded.id;
@@ -17,7 +15,6 @@ function verifyToken(token, callback) {
 
       // send the token data back to the user 
       callback(200, data);
-
     }
     else {
 

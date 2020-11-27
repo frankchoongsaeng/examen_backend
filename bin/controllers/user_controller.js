@@ -2,6 +2,7 @@ const userRouter = require("express").Router();
 const { hashPassword, comparePassword } = require("../controllers/encrypt");
 const User = require("../models/user");
 const Token = require("../models/token");
+const Exam = require("../models/exam");
 const jwt = require("jsonwebtoken");
 
 
@@ -57,24 +58,24 @@ function signup({ firstName, lastName, phone, email, password, tosAgreement } = 
                     User.updateOne({ _id: _user._id }, { $push: { tokens: __stored_token._id }, $set: { currentToken: __stored_token._id } }, (update_user_err) => {
 
                       if (!update_user_err) {
-                        callback(201, { "response": __stored_token });
+                        callback(201, __stored_token);
                       }
                       else {
-                        console.log(update_user_err);
+                        console.trace(update_user_err);
                         callback(500, { "response": "unable to update user with token" });
                       }
 
                     })
                   }
                   else {
-                    console.log(token_save_err);
+                    console.trace(token_save_err);
                     callback(500, { "response": "unable to save usertoken" });
                   }
 
                 });
               }
               else {
-                console.log(jwt_err);
+                console.trace(jwt_err);
                 callback(500, { "response": "unable to create token" });
               }
             });
@@ -82,6 +83,7 @@ function signup({ firstName, lastName, phone, email, password, tosAgreement } = 
 
 
           } else {
+            console.trace(err);
             callback(500, { "response": "Could not save register a new user, This is a problem on our end and we're working to fix it" });
           }
         })
@@ -102,7 +104,7 @@ function signup({ firstName, lastName, phone, email, password, tosAgreement } = 
 
 
 
-function login({ email, password }, token, callback) {
+function login({ email, password }, callback) {
 
   // if(token)
 
@@ -117,8 +119,8 @@ function login({ email, password }, token, callback) {
     // continue to persist to database
     User.findOne({ "email": email }, (no_user_err, user) => {
 
-      if(no_user_err) {
-        callback(500, {"response" : "error performing a user search, this is a problem on our end and we're working to fix it"});
+      if (no_user_err) {
+        callback(500, { "response": "error performing a user search, this is a problem on our end and we're working to fix it" });
         return false;
       }
 
@@ -142,32 +144,31 @@ function login({ email, password }, token, callback) {
                   User.updateOne({ _id: user._id }, { $push: { tokens: __stored_token._id }, $set: { currentToken: __stored_token._id } }, (update_user_err) => {
 
                     if (!update_user_err) {
-                      console.log("Request completed");
-                      callback(200, { "response": __stored_token });
+                      callback(200, __stored_token );
                     }
                     else {
-                      console.log(update_user_err);
+                      console.trace(update_user_err);
                       callback(500, { "response": "unable to update user with token" });
                     }
 
                   })
                 }
                 else {
-                  console.log(token_save_err);
+                  console.trace(token_save_err);
                   callback(500, { "response": "unable to save usertoken" });
                 }
 
               });
             }
             else {
-              console.log(jwt_err);
+              console.trace(jwt_err);
               callback(500, { "response": "unable to create token" });
             }
           });
 
 
         } else {
-          callback(401, { "response": "incorrect password" } )
+          callback(401, { "response": "incorrect password" })
         }
       }
       else {
@@ -182,7 +183,44 @@ function login({ email, password }, token, callback) {
 }
 
 
+
+function getAllExams(token, callback) {
+
+  // decode token and get userId from it
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+
+
+
+    if (decoded) {
+
+      // get the userId from the decoded token
+      let userId = decoded.id;
+
+      Exam.find({ 'ownerId': userId }, (err, allexams) => {
+
+        if (err) {
+          return callback(500, { "response": "error finding exams, this is a problem on our end and we're working to fix it" })
+        }
+
+        if (allexams) {
+          return callback(200, allexams);
+        }
+        else {
+          return callback(204, { "response": "error finding exams" })
+        }
+      });
+
+
+    }
+    else {
+      return callback(403, { "response": "unable to verify token." })
+    }
+  });
+
+}
+
 module.exports = {
   signup,
-  login
+  login,
+  getAllExams
 }

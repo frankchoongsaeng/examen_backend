@@ -3,48 +3,84 @@ const Question = require("../models/question");
 function createOrUpdate(data, callback) {
 
   validateQuestion(data, (validData) => {
-    // console.log("is valid")  
+
     if (validData) {
 
-      const query = {},
-        update = data,
-        options = { upsert: true, new: true, setDefaultsOnInsert: true };
+      // save a mongodb docuement if it's a new question
+      if (!validData._id) {
+        delete validData._id; // remove the id to avoid overwriting
 
+        let new_question = new Question(validData)
 
-      if (data._id) {
-        query._id = data._id;
+        // create a document because it has not yet been created
+        new_question.save((error, result) => {
+          if (error) {
+            console.trace("err: ")
+            console.dir(error);
+            return callback(500, { "response": "unable to save question. try again later" });
+          }
+
+          callback(200, result);
+        });
+
       }
+      else {
+        // update a document becuase it has already been created
+        let query = { _id: validData._id };
+        delete validData._id;
+        let update = { ...validData };
+        let options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-      console.dir(query, update)
-      // Find the document
-      Question.findOneAndUpdate(query, update, options, function (error, result) {
-        if (error){
-          console.log("err: ")
-          console.dir(error);
-          return callback(500, { "response": "unable to save question. try again later"} );
-        }
+        // Find the document
+        Question.findOneAndUpdate(query, update, options, (error, result) => {
+          if (error) {
+            console.trace(error);
+            return callback(500, { "response": "unable to save question. try again later" });
+          }
 
-        console.log("result: ")
-        console.dir(result);
-        callback(200, {"response": result});
-        // do something with the document
-      });
-
+          callback(200, { "response": result });
+        });
+      }
     }
     else {
       // data validation failed
-      callback(400, {"response": "bad data send, question must at least have a question"});
+      callback(400, { "response": "bad data send, question must at least have a question" });
     }
   });
 }
 
 
 function deleteQuestion(id, callback) {
-  if(id) {
-    Question.findByIdAndDelete()
+  if (id) {
+    Question.findByIdAndDelete(id, err => {
+      if (err) {
+        console.trace(err);
+        return callback(500, {"response": "unable to delete question"})
+      }
+
+      callback(200, {"response": "operation successfull"});
+    })
   } else {
     // question id not provided 
-    callback(400, {"response": "no question id to delete"});
+    callback(400, { "response": "no question id to delete" });
+  }
+}
+
+
+function getQuestion(id, callback) {
+  if (id) {
+    Question.findById(id, (err, questionData) => {
+      if (err) {
+        console.trace(err);
+        return callback(500, {"response": "unable to delete question"})
+      }
+
+      callback(200, questionData);
+    });
+  }
+  else {
+    // question id was not provided
+    callback(400, { "response": "no question id to get" });
   }
 }
 
@@ -59,4 +95,6 @@ const validateQuestion = (data, callback) => {
 
 module.exports = {
   createOrUpdate,
+  deleteQuestion,
+  getQuestion,
 }

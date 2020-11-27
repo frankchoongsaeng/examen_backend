@@ -1,5 +1,5 @@
 const userRouter = require("express").Router();
-const { login, signup } = require("../controllers/user_controller");
+const { login, signup, getAllExams } = require("../controllers/user_controller");
 
 /**
  * POST - Create a new user in the user collection
@@ -12,11 +12,7 @@ userRouter.post("/signup", (req, res) => {
   let body = req.body;
 
   signup(body, (statusCode, response) => {
-    if(statusCode === 201) {
-      delete response._id;
-      delete response._v;
-      res.setHeader("Set-Cookie", "authToken="+ response.token);
-    }
+
     res.status(statusCode);
     res.json(response);
   })
@@ -33,17 +29,23 @@ userRouter.post("/signup", (req, res) => {
  */
 userRouter.post("/login", (req, res) => {
 
-  let body = req.body;
-  let token = req.headers.cookie;
-  console.log(req.headers);
+  login(req.body, (statusCode, response) => {
+
+    res.status(statusCode);
+    res.json(response);
+  })
+
+});
+
+
+/**
+ * GET - get a users exams
+ */
+userRouter.get("/exams", (req, res) => {
   
-  
-  login(body, token, (statusCode, response) => {
-    if(statusCode === 200) {
-      delete response.response._id;
-      delete response.response.__v;
-      res.setHeader("Set-Cookie", "authToken="+ response.response.token);
-    }
+  let token = req.headers.token;
+
+  getAllExams(token, (statusCode, response) => {
     res.status(statusCode);
     res.json(response);
   })

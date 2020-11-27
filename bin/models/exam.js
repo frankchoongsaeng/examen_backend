@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 // const muv = require("mongoose-unique-validator");
 
+
 const schema = new mongoose.Schema({
   ownerId: {
     type: mongoose.Types.ObjectId,
@@ -15,15 +16,27 @@ const schema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "Organization"
   },
-  timed: {
-    type: Boolean
-  },
+  timed: Boolean,
   duration: String,
   expires: Date,
   published: Boolean,
-  link: String
+  date_published: Date,
+  link: String,
+  questions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Question"
+  }],
+  submissions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Submission" 
+  }],
+  created: Date,
+  modified: {
+    type: Date,
+    default: new Date()
+  }
 })
 
-// schema.plugin(muv);
 
+// schema.plugin(muv);
 module.exports = mongoose.model("Exam", schema);

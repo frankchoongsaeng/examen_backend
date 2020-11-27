@@ -28,10 +28,6 @@ const schema = new mongoose.Schema({
     ref: "Organization",
   },
   position: String,
-  exams: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Exam" 
-  }],
   submissions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Submission" 

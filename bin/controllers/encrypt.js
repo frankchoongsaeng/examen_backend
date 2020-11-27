@@ -8,7 +8,7 @@ module.exports.comparePassword = function(pass, hashedPass) {
   } 
   catch( e ) {
     console.log("could not compare passwords");
-    console.error(e);
+    console.trace(e);
     console.log("==============================================================================");
   }
 
@@ -24,7 +24,7 @@ module.exports.hashPassword = function(pass) {
   }
   catch ( e ) {
     console.error("could not hash password");
-    console.error(e);
+    console.trace(e);
     console.log("==============================================================================");
   }
 
