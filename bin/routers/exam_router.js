@@ -53,6 +53,9 @@ router.get("/:id", (req, res) => {
  * EXAMS - GET
  * gets a questions of a particular exam 
  * provided that examId
+ * @todo do not let exams that have already 
+ * been published to be republished this will basically
+ * invalidate the old publish link 
  */
 router.get("/:id/questions", (req, res) => {
 
