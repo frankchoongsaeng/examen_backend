@@ -50,15 +50,28 @@ function createOrUpdate(data, callback) {
 }
 
 
+function getAllQuestionForExam(id, callback) {
+  Question.find({ examId: id }, (err, allexamsdocument) => {
+
+    if (err) {
+      console.trace(err);
+      return callback(500, {"response": "Could not get all questions data from db. This is a problem on our end and our engineers are working hard to fix this"});
+    }
+
+    callback(200, allexamsdocument);
+  });
+}
+
+
 function deleteQuestion(id, callback) {
   if (id) {
     Question.findByIdAndDelete(id, err => {
       if (err) {
         console.trace(err);
-        return callback(500, {"response": "unable to delete question"})
+        return callback(500, { "response": "unable to delete question" })
       }
 
-      callback(200, {"response": "operation successfull"});
+      callback(200, { "response": "operation successfull" });
     })
   } else {
     // question id not provided 
@@ -72,7 +85,7 @@ function getQuestion(id, callback) {
     Question.findById(id, (err, questionData) => {
       if (err) {
         console.trace(err);
-        return callback(500, {"response": "unable to delete question"})
+        return callback(500, { "response": "unable to delete question" })
       }
 
       callback(200, questionData);
@@ -97,4 +110,5 @@ module.exports = {
   createOrUpdate,
   deleteQuestion,
   getQuestion,
+  getAllQuestionForExam,
 }

@@ -4,12 +4,14 @@
  * and appending the provided title to it
  */
 const generateUniqueLink = (title) => {
-  if (!title || typeof title !== "string" || title.length === 0)
+  if (!title || typeof title !== "string" || title.length === 0) {
+    console.log(title);
     throw new Error("title must be provided to create a unique link");
+  }
 
   // let dateInNumbersOnly = new Date()/**get a new date which will be unique */
   //                             .
-  let uniqueHex = "/".concat( convertToHex(Date.now()) );
+  let uniqueHex = convertToHex(Date.now());
   let transformedTitle = title.toLowerCase().split(" ").join("-");
   return uniqueHex.concat("/", transformedTitle);
 }

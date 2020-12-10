@@ -24,10 +24,12 @@ function verifyToken(token, callback) {
 }
 
 function isValidToken(req, res, next) {
+  // console.log(req.path)
   let loginpath = /[a-z]*\/login/g.test(req.path);
   let signuppath = /[a-z]*\/signup/g.test(req.path);
+  let session = /[a-z]*\/exams\/published\/.*\/.*/g.test(req.path);
   
-  if (!(loginpath || signuppath)) {
+  if (!(loginpath || signuppath || session)) {
     let token = req.headers.token;
     verifyToken(token, (isvalid, data) => {
       if(!isvalid) {

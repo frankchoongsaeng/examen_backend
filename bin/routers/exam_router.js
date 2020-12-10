@@ -1,16 +1,34 @@
 const router = require("express").Router();
-const { 
-  getAllExams, 
-  createNewExam, 
-  addQuestionToExam, 
-  getExamById, 
-  deleteExamById, 
-  editCreatedExam,
+const {
+  getAllExams,
   getPublishedExams,
-  publishExam
+  getExamById,
+  getDraftExams,
+  getExamByLink,
+  createNewExam,
+  editCreatedExam,
+  addQuestionToExam,
+  publishExam,
+  deleteExamById,
 } = require("../controllers/exam_controller");
 const { isValidToken } = require("../utils/is_valid_token");
 
+
+
+
+/**
+ * EXAMS - GET
+ * get all draft exams
+ */
+router.get("/published/:hex/:title", (req, res) => {
+
+  let link = req.params.hex + "/" + req.params.title;
+  getExamByLink(link, (status, response) => {
+    res.status(status);
+    res.json(response);
+  });
+
+});
 
 
 
@@ -20,7 +38,6 @@ const { isValidToken } = require("../utils/is_valid_token");
  * get all published exams
  */
 router.get("/published", (req, res) => {
-  console.log(req.body.userData.userId)
 
   getPublishedExams(req.body.userData.userId, (status, response) => {
     res.status(status);
@@ -31,6 +48,41 @@ router.get("/published", (req, res) => {
 
 
 
+
+/**
+ * EXAMS - GET
+ * get exam data and exam questions
+ */
+router.get("/session/:link", (req, res) => {
+
+  getExamSession(req.params.link, (status, response) => {
+    res.status(status);
+    res.json(response);
+  });
+
+});
+
+
+
+
+
+/**
+ * EXAMS - GET
+ * get all draft exams
+ */
+router.get("/draft", (req, res) => {
+  console.log(req.body.userData.userId)
+
+  getDraftExams(req.body.userData.userId, (status, response) => {
+    res.status(status);
+    res.json(response);
+  });
+
+});
+
+
+
+
 /**
  * EXAMS - GET
  * gets a particular exam by it's id
@@ -38,7 +90,7 @@ router.get("/published", (req, res) => {
 router.get("/:id", (req, res) => {
 
   let token = req.headers.token;
-  let id =  req.params.id;
+  let id = req.params.id;
 
   getExamById({ token, id }, (status, response) => {
     res.status(status);
@@ -51,8 +103,8 @@ router.get("/:id", (req, res) => {
 
 /**
  * EXAMS - GET
- * gets a questions of a particular exam 
- * provided that examId
+ * gets questions of a particular exam 
+ * if the examId is provided
  * @todo do not let exams that have already 
  * been published to be republished this will basically
  * invalidate the old publish link 
@@ -60,10 +112,10 @@ router.get("/:id", (req, res) => {
 router.get("/:id/questions", (req, res) => {
 
   let token = req.headers.token;
-  let id =  req.params.id;
+  let id = req.params.id;
 
   getExamById({ token, id }, (status, response) => {
-    if(status === 200) {
+    if (status === 200) {
       response = JSON.parse(JSON.stringify(response));
       response = response.questions;
     }
@@ -81,16 +133,16 @@ router.get("/:id/questions", (req, res) => {
  * get all exams belonging to a specific user
  * @todo use the users  id to fetch the exam
  */
-router.get("/", (req, res) => {
+// router.get("/", (req, res) => {
 
-  let token = req.headers.token;
+//   let token = req.headers.token;
 
-  getAllExams(token, (status, response) => {
-    res.status(status);
-    res.json(response);
-  });
+//   getAllExams(token, (status, response) => {
+//     res.status(status);
+//     res.json(response);
+//   });
 
-});
+// });
 
 
 
@@ -101,7 +153,7 @@ router.get("/", (req, res) => {
 router.delete("/:id", (req, res) => {
 
   let token = req.headers.token;
-  let id =  req.params.id;
+  let id = req.params.id;
 
   deleteExamById({ token, id }, (status, response) => {
     res.status(status);
@@ -111,6 +163,24 @@ router.delete("/:id", (req, res) => {
 });
 
 
+
+
+/**
+ * EXAMS - POST
+ * create or fetch an exam session
+ */
+// router.post("/session", (req, res) => {
+//   console.log(req.body.userData.userId)
+
+//   getDraftExams(req.body.userData.userId, (status, response) => {
+//     res.status(status);
+//     res.json(response);
+//   });
+
+// });
+
+
+
 /**
  * EXAMS - POST
  * creates a new exam 
@@ -118,7 +188,7 @@ router.delete("/:id", (req, res) => {
 router.post("/create", (req, res) => {
   let data = req.body;
   let token = req.headers.token;
-  createNewExam({token: token, ...data}, (status, response) => {
+  createNewExam({ token: token, ...data }, (status, response) => {
     res.status(status);
     res.json(response);
   });
@@ -135,7 +205,7 @@ router.post("/question", (req, res) => {
   let data = req.body;
   let token = req.headers.token;
 
-  addQuestionToExam({token: token, ...data}, (status, response) => {
+  addQuestionToExam({ token: token, ...data }, (status, response) => {
     res.status(status);
     res.json(response);
   });
@@ -152,7 +222,7 @@ router.post("/:id/publish", (req, res) => {
   let data = req.body;
   let id = req.params.id;
 
-  publishExam( id, data, (status, response) => {
+  publishExam(id, data, (status, response) => {
     res.status(status);
     res.json(response);
   });

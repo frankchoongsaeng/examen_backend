@@ -1,6 +1,22 @@
 const router = require("express").Router();
-const { createOrUpdate, getQuestion, deleteQuestion } = require("../controllers/question_controller");
+const { createOrUpdate, getQuestion, deleteQuestion, getAllQuestionForExam } = require("../controllers/question_controller");
 const { isValidToken } = require("../utils/is_valid_token");
+
+
+/**
+ * QUESTIONS - GET
+ * get all question data related to an exam
+ * required: examId as param
+ */
+router.get("/all/:id", (req, res) => {
+  let id =  req.params.id;
+  getAllQuestionForExam(id, (status, response) => {
+    res.status(status);
+    res.json(response);
+  });
+  
+});
+
 
 
 /**

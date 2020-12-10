@@ -212,6 +212,20 @@ function publishExam(id, data, callback) {
 }
 
 
+function getExamByLink(link, callback) {
+
+  Exam.findOne({link: link}, (err, examdocument) => {
+    if(err) {
+      console.trace(err);
+      return callback(500, {"response": "unable to search for exam"});
+    }
+
+    callback(200, examdocument);
+  })
+}
+
+
+
 function deleteExamById(data, callback) {
 
   /**@todo add token verification */
@@ -247,6 +261,22 @@ function deleteExamById(data, callback) {
 function getPublishedExams(userId, callback) {
 
   Exam.find({ ownerId: userId, published: true }, (err, examdocuments) => {
+    // could not successfully find the exam
+    if (err) {
+      console.trace(err);
+      return callback(500, { "response": "unable to complete database query" });
+    }
+
+    // query successfull
+    callback(200, examdocuments);
+  });
+
+}
+
+
+function getDraftExams(userId, callback) {
+
+  Exam.find({ ownerId: userId, published: false || undefined }, (err, examdocuments) => {
     // could not successfully find the exam
     if (err) {
       console.trace(err);
@@ -296,5 +326,7 @@ module.exports = {
   getExamById,
   deleteExamById,
   publishExam,
-  getPublishedExams
+  getPublishedExams,
+  getDraftExams,
+  getExamByLink,
 }
