@@ -3,6 +3,7 @@ const db_conn = require("../config/dbconnect");
 const port = process.env.PORT || 5000;
 
 module.exports.start = async (app) => {
+  console.log("trying to connect to database");
   db_conn.connect(
     (err) => {
       if(err) {

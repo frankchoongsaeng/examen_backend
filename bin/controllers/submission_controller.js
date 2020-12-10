@@ -88,7 +88,6 @@ function finishSubmission(id, data, callback) {
   //   } 
   // }
 
-  Submission.findByIdAndUpdate(id,, (err, res) => {} )
 
   Submission.findByIdAndUpdate(id, updateQuery, { new: true }, (err, submissiondata) => {
     if (err) {
