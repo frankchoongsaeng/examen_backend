@@ -16,7 +16,6 @@ const { isValidToken } = require("../utils/is_valid_token");
 // enable cross-origin-requests
 router.use(cors());
 
-// router.use("*", express.static(path.join(__dirname, "../../public/")));
 
 // parse body of request to json
 router.use(bodyParser.json());
@@ -32,6 +31,8 @@ router.use("/api/exams", examRouter);
 router.use("/api/questions", questionRouter);
 
 router.use("/api/token", tokenRouter);
+
+router.use("*", express.static(path.join(__dirname, "../../public/")));
 
 // trap all wrong request
 router.use(notFound);
