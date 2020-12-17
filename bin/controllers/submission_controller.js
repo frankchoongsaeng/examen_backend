@@ -56,8 +56,6 @@ function saveResponseList(id, list, callback) {
     }
   }
 
-
-
   Submission.findByIdAndUpdate(id, updateQuery, { new: true }, (err, submissiondata) => {
     if (err) {
       console.trace(err);
@@ -71,22 +69,12 @@ function saveResponseList(id, list, callback) {
 
 function finishSubmission(id, data, callback) {
 
-  // let updateQuery = {
-  //   $set: {
-  //     submitted: true,
-  //     date_submitted: new Date()
-  //   }
-  // }
-
-  // const query =  {
-  //   $pull: { 
-  //     picturesGallery:  {
-  //       _id: {
-  //         $in: req.body
-  //       }
-  //     } 
-  //   } 
-  // }
+  let updateQuery = {
+    $set: {
+      submitted: true,
+      date_submitted: new Date()
+    }
+  }
 
 
   Submission.findByIdAndUpdate(id, updateQuery, { new: true }, (err, submissiondata) => {
