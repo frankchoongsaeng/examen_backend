@@ -31,7 +31,7 @@ router.use("/api/questions", questionRouter);
 
 router.use("/api/token", tokenRouter);
 
-router.use(express.static(path.join(__dirname, "../../client/build")));
+router.use(express.static(path.join(__dirname, "../../client/public")));
 
 // trap all wrong request
 router.use(notFound);

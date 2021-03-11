@@ -71,7 +71,7 @@ router.get("/session/:link", (req, res) => {
  * get all draft exams
  */
 router.get("/draft", (req, res) => {
-  console.log(req.body.userData.userId)
+  console.log(req.body)
 
   getDraftExams(req.body.userData.userId, (status, response) => {
     res.status(status);

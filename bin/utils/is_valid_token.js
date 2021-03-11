@@ -28,7 +28,8 @@ function isValidToken(req, res, next) {
   let loginpath = /[a-z]*\/login/g.test(req.path);
   let signuppath = /[a-z]*\/signup/g.test(req.path);
   let session = /[a-z]*\/exams\/published\/.*\/.*/g.test(req.path);
-  let home =  /^\/$/;
+  let home =  /^\/$/.test(req.path);
+  console.log({loginpath, signuppath, session, home});
   
   if (!(home || loginpath || signuppath || session)) {
     let token = req.headers.token;
